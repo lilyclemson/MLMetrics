@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <script src="http://viz.hpccsystems.com/v1.10.0-rc6/dist-amd/hpcc-viz.js"></script>
+    <script src="http://viz.hpccsystems.com/v1.10.0-rc6/dist-amd/hpcc-bundles.js"></script>
+    <script>
+        require.config({
+            paths: {
+                "src": "http://viz.hpccsystems.com/v1.10.0-rc6/dist-amd",
+                "font-awesome": "http://viz.hpccsystems.com/v1.10.0-rc6/dist-amd/font-awesome/css/font-awesome.min"
+            }
+        });
+    </script>
+</head>
+
+<body>
+    <div id="placeholder" style="width:100%; height:100vh"> </div>
+    <script> 
+    require(["src/other/Comms", "src/composite/MegaChart"], function (Comms, MegaChart) { 
+        var widget = new MegaChart().showChartSelect(true).target("placeholder")
+                                .title("ARI Visualisation")
+                                .columns(["K","2","3","4","5","6"])
+                                .render(); 
+        var connection = Comms.createESPConnection("http://18.216.153.140:8010/?Wuid=W20190814-113238&Widget=WUDetailsWidget"); // URL copied from ECL Watch WU Details Page 
+        connection.send({}, function (response) { 
+            var data = response.ARI.map(function (row) { return row.sil; });
+            ans = [];
+            for(i=0;i<25;i+=5){
+                ans.push([(i/5)+2,data[i],data[i+1],data[i+2],data[i+3],data[i+4]]);
+            }
+            console.log(ans);
+            widget .data(ans) .render() ;
+        });
+    });
+    </script>
+</body>
+
+</html>

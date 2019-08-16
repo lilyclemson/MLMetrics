@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <script src="http://viz.hpccsystems.com/v1.10.0-rc6/dist-amd/hpcc-viz.js"></script>
+    <script src="http://viz.hpccsystems.com/v1.10.0-rc6/dist-amd/hpcc-bundles.js"></script>
+    <script>
+        require.config({
+            paths: {
+                "src": "http://viz.hpccsystems.com/v1.10.0-rc6/dist-amd",
+                "font-awesome": "http://viz.hpccsystems.com/v1.10.0-rc6/dist-amd/font-awesome/css/font-awesome.min"
+            }
+        });
+    </script>
+</head>
+
+<body>
+    <div id="placeholder" style="width:100%; height:100vh"> </div>
+    <script> 
+    require(["src/other/Comms", "src/composite/MegaChart"], function (Comms, MegaChart) { 
+        var widget = new MegaChart().showChartSelect(true).target("placeholder")
+                                .title("AUC Visualisation")
+                                .columns(["class","300", "400","500","600","700","800"])
+                                .render(); 
+        var connection = Comms.createESPConnection("http://18.216.153.140:8010/?Wuid=W20190816-115507&Widget=WUDetailsWidget"); // URL copied from ECL Watch WU Details Page 
+        connection.send({}, function (response) { 
+            var data = response.auc300.map(function (row) { return [row.class,row.auc]; }); 
+            var data1 = response.auc400.map(function (row) { return [row.class,row.auc]; }); 
+            var data2 = response.auc500.map(function (row) { return [row.class,row.auc]; }); 
+            var data3 = response.auc600.map(function (row) { return [row.class,row.auc]; }); 
+            var data4 = response.auc700.map(function (row) { return [row.class,row.auc]; }); 
+            var data5 = response.auc800.map(function (row) { return [row.class,row.auc]; }); 
+            ans = [];
+            ans.push([300,data[0][1],data[1][1],data[2][1],data[3][1],data[4][1],data[5][1],data[6][1]]);
+            ans.push([400,data1[0][1],data1[1][1],data1[2][1],data1[3][1],data1[4][1],data1[5][1],data1[6][1]]);
+            ans.push([500,data2[0][1],data2[1][1],data2[2][1],data2[3][1],data2[4][1],data2[5][1],data2[6][1]]);
+            ans.push([600,data3[0][1],data3[1][1],data3[2][1],data3[3][1],data3[4][1],data3[5][1],data3[6][1]]);
+            ans.push([700,data4[0][1],data4[1][1],data4[2][1],data4[3][1],data4[4][1],data4[5][1],data4[6][1]]);
+            ans.push([800,data5[0][1],data5[1][1],data5[2][1],data5[3][1],data5[4][1],data5[5][1],data5[6][1]]);
+            console.log(ans);
+            widget .data(ans) .render() ;
+        });
+    });
+    </script>
+</body>
+
+</html>
